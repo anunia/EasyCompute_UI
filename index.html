@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello Rete.js!</title>
+    <style>
+      body, html{
+        height: 100%;
+        margin: 0
+      }
+      .socket.number{
+        background: #96b38a;
+      }
+    </style>
+    <link rel="stylesheet" href="index.css">
+
+  </head>
+  <body>
+    <button href="#" class="myButton" onclick="rete.saveProject()">Save project</button>
+    <button href="#" class="myButton" onclick="rete.readProject()">Read project</button>
+
+   <div class="node-editor" id="nodeEditor"></div>
+    <script>
+      var rete = require('./rete');
+      rete.createEditor(document.querySelector("#nodeEditor"));
+    </script>
+
+  </body>
+</html>
