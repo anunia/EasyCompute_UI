@@ -95,6 +95,21 @@ class AddComponent extends Rete.Component {
 var editor;
 
 
+function loadModules(){
+    var json = fs.readFileSync('./Modules.json'); //(with path)
+    var data = JSON.parse(json);
+    console.log(data);
+    for (const m in data.Modules){
+        console.log(data.Modules[m].Name);
+        var name = data.Modules[m].Name;
+        var variables = data.Modules[m].Variables;
+        var inputs = data.Modules[m].Inputs;
+        var outputs = data.Modules[m].Outputs;
+
+        Rete.Component newModule = new Rete.Component(name);
+    }
+
+}
 
 exports.saveProject = function saveProject(){
     console.log("leeeeeeeeeeeeee");
