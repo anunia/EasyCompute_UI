@@ -1,8 +1,9 @@
-
 const Rete = require('rete');
 const ConnectionPlugin = require('rete-connection-plugin');
 const AlightRenderPlugin = require('rete-alight-render-plugin');
 const AreaPlugin = require('rete-area-plugin');
+//const TaskPlugin = require('rete-task-plugin');
+//const ContextMenuPlugin = require('rete-context-menu-plugin');
 const fs = require('fs');
 
 var numSocket = new Rete.Socket('Number value');
@@ -140,46 +141,26 @@ class NoAbstractComponent extends Rete.Component{
         this.outputsData = outputs;
     }
     builder(node) {
-        var vars=[];
-        var inps=[];
-        var i = 0;
         if(this.variablesData != undefined){
             for(const v of this.variablesData)
             {
                 console.log(v.varName);
-                vars[i] = new Rete.Input(v.varName, new Rete.Socket(v.varType + ' value') );
                 if(v.varType == "String"){
-                    //vars[i].addControl(new StringControl(this.editor, v.varName));
-                    node
-                        .addControl(new StringControl(this.editor, null))
-                        //.addInput(vars[i]);
+                    node.addControl(new StringControl(this.editor, null))
 
                 }
                 if(v.varType == "Int"){
-                    vars[i].addControl(new NumControl(this.editor, v.varName));
-                    node
-                        .addControl(new NumControl(this.editor, v.VarName))
-                        //.addInput(vars[i]);
+                    node.addControl(new NumControl(this.editor, v.VarName))
                 }
-                i++;
             }
         }
-        i=0;
         if(this.inputsData != undefined){
             for(const v of this.inputsData)
             {
-                inps[i] = new Rete.Input(v.VarName, new Rete.Socket(v.PortType + ' value') );
-                if(v.PortType == "String")
-                    inps[i].addControl(new StringControl(this.editor, v.VarName));
-                if(v.PortType == "Int")
-                    inps[i].addControl(new NumControl(this.editor, v.VarName));
-                node
-                    .addControl(new StringControl(this.editor, null))
-                    .addInput(inps[i]);
-                i++;
+                const inp = new Rete.Input(v.VarName,numSocket );
+                node.addInput(inp);
             }
         }
-        i=0;
 
         if(this.outputsData != undefined){
             console.log("ttttttt");
@@ -187,12 +168,8 @@ class NoAbstractComponent extends Rete.Component{
             for(const v of this.outputsData)
             {
                 console.log("ttttttt");
-                const out = new Rete.Output(v.VarName, new Rete.Socket(v.PortType + ' value') );
-                //out.addControl(new NumControl(this.editor, v.VarName));
-
-                node
-                    .addControl(new NumControl(this.editor, v.VarName))
-                    .addOutput(out);
+                const out = new Rete.Output(v.VarName, numSocket );
+                node.addOutput(out);
             }
         }
         return node;
@@ -248,6 +225,8 @@ exports.createEditor = async (container) => {
     editor.use(ConnectionPlugin, { curvature: 0.4 });
     editor.use(AlightRenderPlugin);
     editor.use(AreaPlugin);
+    //editor.use(ContextMenuPlugin);
+    //editor.use(TaskPlugin);
     //editor.use(MinimapPlugin);
 
     var engine = new Rete.Engine('demo@0.1.0');
