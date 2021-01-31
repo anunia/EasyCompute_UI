@@ -6,6 +6,7 @@ const AreaPlugin = require('rete-area-plugin');
 const fs = require('fs');
 
 var numSocket = new Rete.Socket('Number value');
+var strSocket = new Rete.Socket('String value');
 
 class NumControl extends Rete.Control {
 
@@ -14,6 +15,44 @@ class NumControl extends Rete.Control {
         this.emitter = emitter;
         this.key = key;
         this.template = '<input type="number" :readonly="readonly" :value="value" @input="change($event)"/>';
+
+       this.scope = {
+            value: 0,
+            readonly,
+            change: this.change.bind(this)
+        };
+    }
+
+    change(e){
+        this.scope.value = +e.target.value;
+        this.update();
+    }
+
+    update(){
+        if(this.key)
+            this.putData(this.key, this.scope.value)
+        this.emitter.trigger('process');
+        this._alight.scan();
+    }
+
+    mounted() {
+        this.scope.value = this.getData(this.key) || 0;
+        this.update();
+    }
+
+    setValue(val) {
+        this.scope.value = val;
+        this._alight.scan()
+    }
+}
+
+class StringControl extends Rete.Control {
+
+    constructor(emitter, key, readonly) {
+        super();
+        this.emitter = emitter;
+        this.key = key;
+        this.template = '<input type="text" :readonly="readonly" :value="value" @input="change($event)"/>';
 
        this.scope = {
             value: 0,
@@ -93,20 +132,63 @@ class AddComponent extends Rete.Component {
     }
 }
 var editor;
+class NoAbstractComponent extends Rete.Component{
+    constructor(name,variables,inputs,outputs){
+        super(name);
+        this.variables = variables;
+        this.inputs = inputs;
+        this.outputs = outputs;
+    }
+    builder(node) {
+        var vars[];
+        var inps[];
+        var outs[];
+        var i = 0;
+        for(const var of this.Variables)
+        {
+            vars[i] = new Rete.Input(var.varName, new Rete.Socket(var.varType + ' value') );
+            if(var.varType == "String")
+                vars[i].addControl(new StringControl(this.editor, varName));
+            if(var.varType == "Int")
+                vars[i].addControl(new NumControl(this.editor, varName));
+                node.addInput(var[i]);
+            i++;
+        }
+        i=0;
+        for(const in of this.Inputs)
+        {
+            vars[i] = new Rete.Input(var.varName, new Rete.Socket(var.varType + ' value') );
+            if(var.varType == "String")
+                inps[i].addControl(new StringControl(this.editor, varName));
+            if(var.varType == "Int")
+                inps[i].addControl(new NumControl(this.editor, varName));
+                node.addInput(inps[i]);
+            i++;
+        }
+        i=0;
+        for(const out of this.Outputs)
+        {
+            outs[i] = new Rete.Input(var.varName, new Rete.Socket(var.PortType + ' value') );
+            node.addInput(outs[i]);
+            i++;
+        }
+        return node;
+    }
 
+}
 
 function loadModules(){
     var json = fs.readFileSync('./Modules.json'); //(with path)
     var data = JSON.parse(json);
     console.log(data);
-    for (const m in data.Modules){
+    for (const m of data.Modules){
         console.log(data.Modules[m].Name);
-        var name = data.Modules[m].Name;
-        var variables = data.Modules[m].Variables;
-        var inputs = data.Modules[m].Inputs;
-        var outputs = data.Modules[m].Outputs;
+        var name = m.Name;
+        var variables = m.Variables;
+        var inputs = m.Inputs;
+        var outputs = m.Outputs;
 
-        Rete.Component newModule = new Rete.Component(name);
+        var newModule = new Rete.Component(name,variables,inputs,outputs);
     }
 
 }
@@ -160,7 +242,7 @@ exports.createEditor = async (container) => {
     editor.connect(n2.outputs[0], add.inputs[1]);
 
     const data = editor.toJSON();
-    createReteComponents();
+    loadModules();
 
     editor.on('process nodecreated noderemoved connectioncreated connectionremoved', async () => {
         await engine.abort();
