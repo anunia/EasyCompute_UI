@@ -1,0 +1,13 @@
+.myButton {
+	background-color: white;
+  color: black;
+  border: 2px solid #008CBA;
+}
+.myButton:hover {
+	background-color: #008CBA;
+  color: white;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}

@@ -1,9 +1,14 @@
+const regeneratorRuntime = require("regenerator-runtime");
+
+
 const Rete = require('rete');
 const ConnectionPlugin = require('rete-connection-plugin');
 const AlightRenderPlugin = require('rete-alight-render-plugin');
 const AreaPlugin = require('rete-area-plugin');
 //const TaskPlugin = require('rete-task-plugin');
-//const ContextMenuPlugin = require('rete-context-menu-plugin');
+//const ContextMenuPlugin = require('./context-menu/index.js');
+const ContextMenuPlugin = require('./rete-context-menu-plugin-new');
+//const { ContextMenuPlugin, Menu, Item, Search } = require('rete-context-menu-plugin');
 const fs = require('fs');
 
 var numSocket = new Rete.Socket('Number value');
@@ -12,9 +17,9 @@ var strSocket = new Rete.Socket('String value');
 class NumControl extends Rete.Control {
 
     constructor(emitter, key, readonly) {
-        super();
+        super(key);
         this.emitter = emitter;
-        this.key = key;
+        //this.key = key;
         this.template = '<input type="number" :readonly="readonly" :value="value" @input="change($event)"/>';
 
        this.scope = {
@@ -50,7 +55,7 @@ class NumControl extends Rete.Control {
 class StringControl extends Rete.Control {
 
     constructor(emitter, key, readonly) {
-        super();
+        super(key);
         this.emitter = emitter;
         this.key = key;
         this.template = '<input type="text" :readonly="readonly" :value="value" @input="change($event)"/>';
@@ -142,33 +147,36 @@ class NoAbstractComponent extends Rete.Component{
     }
     builder(node) {
         if(this.variablesData != undefined){
+            let i = 1;
             for(const v of this.variablesData)
             {
                 console.log(v.varName);
                 if(v.varType == "String"){
-                    node.addControl(new StringControl(this.editor, null))
+                    node.addControl(new StringControl(this.editor, 'num'))
 
                 }
                 if(v.varType == "Int"){
-                    node.addControl(new NumControl(this.editor, v.VarName))
+                    node.addControl(new NumControl(this.editor, 'num'))
                 }
             }
         }
         if(this.inputsData != undefined){
+            let i = 1;
             for(const v of this.inputsData)
             {
-                const inp = new Rete.Input(v.VarName,numSocket );
+                const inp = new Rete.Input(v.varName+i++, v.VarName,numSocket );
                 node.addInput(inp);
             }
         }
 
         if(this.outputsData != undefined){
             console.log("ttttttt");
+            let i = 1;
 
             for(const v of this.outputsData)
             {
                 console.log("ttttttt");
-                const out = new Rete.Output(v.VarName, numSocket );
+                const out = new Rete.Output(v.varName+i++,v.VarName, numSocket );
                 node.addOutput(out);
             }
         }
@@ -182,7 +190,7 @@ class NoAbstractComponent extends Rete.Component{
 }
 
 function loadModules(){
-    var json = fs.readFileSync('./Modules.json'); //(with path)
+    var json = fs.readFileSync('./Modules.json');
     var data = JSON.parse(json);
     console.log(data);
     var modules = [];
@@ -219,15 +227,16 @@ exports.readProject = function readProject(){
 
 exports.createEditor = async (container) => {
 
-    var components = [new NumComponent(), new AddComponent()];
-
-    editor = new Rete.NodeEditor('demo@0.1.0', container);
-    editor.use(ConnectionPlugin, { curvature: 0.4 });
+    editor = new Rete.NodeEditor('JuliaVisual@0.1.0', container);
+    editor.use(ConnectionPlugin.default, { curvature: 0.4 });
     editor.use(AlightRenderPlugin);
     editor.use(AreaPlugin);
-    //editor.use(ContextMenuPlugin);
+    editor.use(ContextMenuPlugin.default);
+
+
     //editor.use(TaskPlugin);
     //editor.use(MinimapPlugin);
+    var components = [new NumComponent(), new AddComponent()];
 
     var engine = new Rete.Engine('demo@0.1.0');
 
@@ -251,22 +260,22 @@ exports.createEditor = async (container) => {
     myNode.position = [80,100];
     editor.addNode(myNode);
 
-
-    var n1 = await components[0].createNode({num: 2});
-    var n2 = await components[0].createNode({num: 0});
-    var add = await components[1].createNode();
-
-    n1.position = [80, 200];
-    n2.position = [80, 400];
-    add.position = [500, 240];
-
-    editor.addNode(n1);
-    editor.addNode(n2);
-    editor.addNode(add);
-
-    editor.connect(n1.outputs[0], add.inputs[0]);
-    editor.connect(n2.outputs[0], add.inputs[1]);
-
+    //
+    // var n1 = await components[0].createNode({num: 2});
+    // var n2 = await components[0].createNode({num: 0});
+    // var add = await components[1].createNode();
+    //
+    // n1.position = [80, 200];
+    // n2.position = [80, 400];
+    // add.position = [500, 240];
+    //
+    // editor.addNode(n1);
+    // editor.addNode(n2);
+    // editor.addNode(add);
+    //
+    // editor.connect(n1.outputs[0], add.inputs[0]);
+    // editor.connect(n2.outputs[0], add.inputs[1]);
+    //
 
     editor.on('process nodecreated noderemoved connectioncreated connectionremoved', async () => {
         await engine.abort();
@@ -276,6 +285,6 @@ exports.createEditor = async (container) => {
     editor.view.resize();
     editor.trigger('process');
 
-    console.log(data);
+    //console.log(data);
 
 }

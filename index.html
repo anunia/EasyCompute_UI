@@ -16,13 +16,13 @@
 
   </head>
   <body>
-    <button href="#" class="myButton" onclick="rete.saveProject()">Save project</button>
-    <button href="#" class="myButton" onclick="rete.readProject()">Read project</button>
+    <button href="#" class="myButton" onclick="editor.saveProject()">Save project</button>
+    <button href="#" class="myButton" onclick="editor.readProject()">Read project</button>
 
    <div class="node-editor" id="nodeEditor"></div>
     <script>
-      var rete = require('./rete');
-      rete.createEditor(document.querySelector("#nodeEditor"));
+      var editor = require('./editor');
+      editor.createEditor(document.querySelector("#nodeEditor"));
     </script>
 
   </body>

@@ -1,0 +1,52 @@
+{
+  "id": "demo@0.1.0",
+  "Modules": {
+    "1": {
+      "Name": "File Reader",
+      "Variables": [
+        {
+          "varName": "FileName",
+          "varType": "String"
+        }
+      ],
+      "FunctionID": "FileReader",
+      "IO": {
+        "Inputs": [],
+        "Outputs": [
+          {
+            "PortID": "0",
+            "PortType": "String",
+            "VarName": "Data"
+          }
+        ]
+      },
+      "Connections": {
+        "Inputs": []
+      }
+    },
+    "2": {
+      "Name": "Parse to Float",
+      "FunctionID": "ParseToFloat",
+      "Variables": [],
+      "IO": {
+        "Inputs": [
+          {
+            "PortID": "0",
+            "PortType": "String",
+            "VarName": "String"
+          }
+        ],
+        "Outputs": [
+          {
+            "PortID": "0",
+            "PortType": "Array{Float64,1}",
+            "VarName": "float"
+          }
+        ]
+      },
+      "Connections": {
+        "Inputs": []
+      }
+    }
+  }
+}

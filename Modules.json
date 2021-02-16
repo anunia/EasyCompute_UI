@@ -4,8 +4,8 @@
       "Name": "File Reader",
       "Variables": [
         {
-          "varName": "File Name",
-          "varType": "String"
+          "varName": "FileName",
+          "varType": "Int"
         }
       ],
       "FunctionID": "FileReader",
@@ -14,7 +14,7 @@
         "Outputs": [
           {
             "PortID": "0",
-            "PortType": "String",
+            "PortType": "Int",
             "VarName": "Data"
           }
         ]
@@ -55,14 +55,14 @@
         "Inputs": [
           {
             "PortID": "0",
-            "PortType": "Array{Float64,1}",
+            "PortType": "Int",
             "VarName": "Data"
           }
         ],
         "Outputs": [
           {
             "PortID": "0",
-            "PortType": "Float64",
+            "PortType": "Int",
             "VarName": "AVG"
           }
         ]
