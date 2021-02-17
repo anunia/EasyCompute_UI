@@ -198,10 +198,8 @@ class NoAbstractComponent extends Rete.Component{
 function loadModules(){
     var json = fs.readFileSync('./Modules.json');
     var data = JSON.parse(json);
-    console.log(data);
     var modules = [];
     for (const m of data.Modules){
-        console.log(m.Name);
         var name = m.Name;
         var variables = m.Variables;
         var inputs = m.IO.Inputs;
@@ -210,7 +208,6 @@ function loadModules(){
         var newModule = new NoAbstractComponent(name,variables,inputs,outputs);
         modules.push(newModule);
     }
-    console.log(modules[0].name);
 
     return modules;
 }
@@ -223,11 +220,19 @@ exports.saveProject = function saveProject(){
         a.download = fileName;
         a.click();
     }
-    download(JSON.stringify(editor.toJSON()), 'json.json', 'text/plain');
+    download(JSON.stringify(editor.toJSON()), 'NewProject.json', 'text/plain');
 }
 
-exports.readProject = function readProject(){
-    console.log("leeeeeeeeeeeeee");
+exports.readProject = function readProject(path){
+
+    fs.readFile(path, 'utf8', function (err, data) {
+      if (err) return console.log(err);
+      data = JSON.parse(data);
+      editor.fromJSON(data);
+      // data is the contents of the text file we just read
+      console.log(data);
+    });
+
 }
 
 exports.createEditor = async (container) => {
@@ -238,7 +243,7 @@ exports.createEditor = async (container) => {
     editor.use(AreaPlugin);
     editor.use(ContextMenuPlugin.default);
 
-    var engine = new Rete.Engine('demo@0.1.0');
+    var engine = new Rete.Engine('JuliaVisual@0.1.0');
 
     // editor.use(TaskPlugin);
     // editor.use(MinimapPlugin);

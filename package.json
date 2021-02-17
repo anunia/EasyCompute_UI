@@ -27,6 +27,7 @@
     "lodash": "^4.17.20",
     "parse-json": "^5.2.0",
     "regenerator-runtime": "^0.13.7",
+    "remote": "^0.2.6",
     "rete": "^1.4.5-rc.1",
     "rete-alight-render-plugin": "^0.1.0",
     "rete-area-plugin": "^0.2.1",
