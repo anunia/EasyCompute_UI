@@ -168,8 +168,8 @@ class NoAbstractComponent extends Rete.Component{
             let i = 1;
             for(const v of this.inputsData)
             {
-                const inp = new Rete.Input('num'+i, 'Number'+i++, numSocket, true);
-                console.log(inp);
+                const inp = new Rete.Input(v.VarName, v.VarName, numSocket, true);
+                console.log(v,v.VarName);
 
                 node.addInput(inp);
             }
@@ -180,8 +180,7 @@ class NoAbstractComponent extends Rete.Component{
 
             for(const v of this.outputsData)
             {
-                console.log("ttttttt");
-                const out = new Rete.Output('num'+i, 'Number'+i++, numSocket, false);
+                const out = new Rete.Output(v.VarName, v.VarName, numSocket, true);
                 console.log(out);
 
                 node.addOutput(out);
@@ -239,17 +238,17 @@ exports.createEditor = async (container) => {
     editor.use(AreaPlugin);
     editor.use(ContextMenuPlugin.default);
 
+    var engine = new Rete.Engine('demo@0.1.0');
 
     // editor.use(TaskPlugin);
     // editor.use(MinimapPlugin);
-    var components = [new NumComponent(), new AddComponent()];
-
-    var engine = new Rete.Engine('demo@0.1.0');
-
-    components.map(c => {
-        editor.register(c);
-        engine.register(c);
-    });
+    // var components = [new NumComponent(), new AddComponent()];
+    //
+    //
+    // components.map(c => {
+    //     editor.register(c);
+    //     engine.register(c);
+    // });
 
     const data = editor.toJSON();
     var modules = loadModules();
@@ -266,23 +265,23 @@ exports.createEditor = async (container) => {
     myNode.position = [80,100];
     editor.addNode(myNode);
 
-
-    var n1 = await components[0].createNode({num: 2});
-    var n2 = await components[0].createNode({num: 0});
-    var add = await components[1].createNode();
-
-    n1.position = [80, 200];
-    n2.position = [80, 400];
-    add.position = [500, 240];
-
-    editor.addNode(n1);
-    editor.addNode(n2);
-    editor.addNode(add);
-    console.log(n1.outputs[0]+"\n"+ add.inputs[0]);
-
-    editor.connect(n1.outputs[0], add.inputs[0]);
-    editor.connect(n2.outputs[0], add.inputs[1]);
-
+    //
+    // var n1 = await components[0].createNode({num: 2});
+    // var n2 = await components[0].createNode({num: 0});
+    // var add = await components[1].createNode();
+    //
+    // n1.position = [80, 200];
+    // n2.position = [80, 400];
+    // add.position = [500, 240];
+    //
+    // editor.addNode(n1);
+    // editor.addNode(n2);
+    // editor.addNode(add);
+    // console.log(n1.outputs[0]+"\n"+ add.inputs[0]);
+    //
+    // editor.connect(n1.outputs[0], add.inputs[0]);
+    // editor.connect(n2.outputs[0], add.inputs[1]);
+    //
 
     editor.on('process nodecreated noderemoved connectioncreated connectionremoved', async () => {
         await engine.abort();
