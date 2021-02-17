@@ -10,6 +10,7 @@ const AreaPlugin = require('rete-area-plugin');
 const ContextMenuPlugin = require('./rete-context-menu-plugin');
 //const { ContextMenuPlugin, Menu, Item, Search } = require('rete-context-menu-plugin');
 const fs = require('fs');
+const { dialog } = require('electron').remote
 
 var numSocket = new Rete.Socket('Number value');
 var strSocket = new Rete.Socket('String value');
@@ -223,6 +224,7 @@ exports.saveProject = function saveProject(){
     download(JSON.stringify(editor.toJSON()), 'NewProject.json', 'text/plain');
 }
 
+
 exports.readProject = function readProject(path){
 
     fs.readFile(path, 'utf8', function (err, data) {
@@ -234,6 +236,20 @@ exports.readProject = function readProject(path){
     });
 
 }
+exports.readProject = function saveProjectFromButton(){
+    path = dialog.showOpenDialog({properties: ['openFile']});
+     console.log(path)
+
+    fs.readFile(path[0], 'utf8', function (err, data) {
+      if (err) return console.log(err);
+      data = JSON.parse(data);
+      editor.fromJSON(data);
+      // data is the contents of the text file we just read
+      console.log(data);
+    });
+
+}
+
 
 exports.createEditor = async (container) => {
 
